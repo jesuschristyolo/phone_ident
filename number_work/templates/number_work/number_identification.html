@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Введите интересующий номер чтобы определить оператора и регион</h3>
+                </div>
+
+                <div class="card-body">
+                    <form method="POST" action="{% url 'number_work:num_ident' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="phone">Номер телефона</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="Номер телефона" name='phone'
+                                   required>
+                            <small class="form-text text-muted">Введите номер телефона или его часть без кода
+                                страны</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Узнать информацию</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {% if exists == 'correct'%}
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Результат запроса</h5>
+                    <p class="card-text">Телефонный номер: {{ new_number.phone_number }}</p>
+                    <p class="card-text">Оператор: {{ new_number.telecommunication_operator }}</p>
+                    <p class="card-text">Регион: {{ new_number.owners_region }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif exists == 'many' %}
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Результат запроса</h5>
+                    Проверьте корректность введённого номера
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% elif exists == 'nothing' %}
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Результат запроса</h5>
+                    По вашему запросу ничего не найдено
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% endif %}
+</div>
+
+
+<script>
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let input = e.target.value.replace(/\D/g, '').substring(0, 10);
+            let formatted = '';
+
+            if (input.length > 0) {
+                formatted = input.substring(0, 3);
+            }
+            if (input.length >= 4) {
+                formatted += ' ' + input.substring(3, 6);
+            }
+            if (input.length >= 7) {
+                formatted += '-' + input.substring(6, 8);
+            }
+            if (input.length >= 9) {
+                formatted += '-' + input.substring(8, 10);
+            }
+
+            e.target.value = formatted;
+        });
+
+</script>
+
+{% endblock %}
