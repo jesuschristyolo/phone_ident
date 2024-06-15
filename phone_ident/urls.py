@@ -24,6 +24,7 @@ urlpatterns = [
     path('number_work/', include('number_work.urls', namespace='number_work')),
     path('api/phone_ident/', NumberAPIView.as_view()),
     path('api/all_numbers/', AllNumbersAPIView.as_view()),
+    path('api/update_number/<int:pk>/', AllNumbersAPIView.as_view()),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

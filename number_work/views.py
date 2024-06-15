@@ -18,22 +18,40 @@ url = 'https://opendata.digital.gov.ru/api/v1/abcdef/phone'
 #     queryset = UserNumber.objects.all()
 #     serializer_class = NumberSerializer
 
+
+# ListCreateAPI реализует добавление по пост запросу и возврат элем по гет запросу
+class NumberAPIList(rest_framework.generics.ListCreateAPIView):
+    queryset = UserNumber.objects.all()
+    serializer_class = NumberSerializer
+
+
 class AllNumbersAPIView(APIView):
 
     def post(self, request):
-        print(request.__dict__)
-        new_phone = UserNumber.objects.create(
-            phone_number=request.data['phone_number'],
-            telecommunication_operator=request.data['telecommunication_operator'],
-            owners_region=request.data['owners_region']
-        )
+        serializer = NumberSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        return Response({'your_data': model_to_dict(new_phone)})
+        return Response({'your_data': serializer.data})
 
     def get(self, request):
         # возвращаем json строку
         lst = UserNumber.objects.all().values()
         return Response({'numbers': list(lst)})
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT is not allowed"})
+        try:
+            instance = UserNumber.objects.get(pk=pk)
+        except:
+            return Response({"error": "Object does not exists"})
+
+        serializer = NumberSerializer(data=request.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'put': serializer.data})
 
 
 class NumberAPIView(APIView):
