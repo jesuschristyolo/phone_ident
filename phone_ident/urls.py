@@ -19,6 +19,7 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('number_work/', include('number_work.urls', namespace='number_work')),

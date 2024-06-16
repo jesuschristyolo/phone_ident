@@ -8,7 +8,6 @@ import requests
 from rest_framework.views import APIView
 from .models import UserNumber
 from rest_framework.response import Response
-
 from .serializers import NumberSerializer
 
 url = 'https://opendata.digital.gov.ru/api/v1/abcdef/phone'
@@ -31,7 +30,6 @@ class AllNumbersAPIView(APIView):
         serializer = NumberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
         return Response({'your_data': serializer.data})
 
     def get(self, request):
@@ -84,12 +82,13 @@ class NumberAPIView(APIView):
 
             user_phone = list(request.query_params.get('search_phone'))
 
-            for char in user_phone:
-                if user_phone.index(char) == 0:
-                    if char == '8':
+            # for char in user_phone:
+            for i in range(len(user_phone)):
+                if i == 0:
+                    if user_phone[i] == '8':
                         user_phone[0] = '7'
-                if char in [' ', '-', '+', '(', ')']:
-                    user_phone[user_phone.index(char)] = ""
+                if user_phone[i] in [' ', '-', '+', '(', ')']:
+                    user_phone[i] = ""
 
             user_phone = "".join(user_phone)
 
